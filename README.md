@@ -1,0 +1,3 @@
+# Tryhardando nos estudos #
+
+* C
