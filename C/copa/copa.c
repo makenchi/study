@@ -29,6 +29,19 @@ void populaGrupos(TTime * grupos[]){
 	
 }
 
+void escreveResultadosGrupos(TTime timesListados[]){
+	int i;
+	int saldoGols;
+	
+	i=0;
+	saldoGols=0;
+	
+	printf("Time        |Pontos     |V  |E  |D  |GP  |GS  |SG\n");
+	for(i=0;i<4;i++){
+		saldoGols = timesListados[i].golsFeitos - timesListados[i].golsSofridos;
+		printf("%s        |%d     |%d  |%d  |%d  |%d  |%d  |%d\n",timesListados[i].nome,timesListados[i].pontos,timesListados[i].vitorias,timesListados[i].empates,timesListados[i].derrotas,timesListados[i].golsFeitos,timesListados[i].golsSofridos,saldoGols);
+	}
+}
 int retornaGol(){
 	int gols;
 	
@@ -72,8 +85,8 @@ void jogarGrupos(TTime * time1,TTime * time2){
 }
 
 
-void executaGrupo(TTime grupoAtual[]) {
-	// lembrete esse grupo1[] já é vetor de 4 seleções logo grupo[4]
+void executaGrupo(TTime grupoAtual[],char nomeGrupo) {
+	// lembrete esse grupoAtual[] já é vetor de 4 seleções logo grupo[4]
 	int i,j,k,l,max;
 	
 	TTime aux;
@@ -111,6 +124,8 @@ void executaGrupo(TTime grupoAtual[]) {
 			grupoAtual[max] = aux;
 	    }
 	}
+	
+	escreveResultadosGrupos(grupoAtual[]);
 }
 
 void faseDeGrupos(char grupo,TTime times[]){
@@ -119,47 +134,13 @@ void faseDeGrupos(char grupo,TTime times[]){
 	
 	i = 0;
 	
-	switch (grupo)
-	{
-		//Grupo A
-		case "A": printf ("Resultados do grupo A\n");
-				for(i=0;i<4;i++){
-					auxGrupo[i] = times[i];
-				}
-				grupo(auxGrupo[]);
-				break;
-			
-		//Grupo B
-		case "B": printf ("Resultados do grupo B\n");
-
-				break;
-			
-		//Grupo C
-		case "C": printf ("Resultados do grupo C\n");
-		        
-				break;
-			
-		//Grupo D
-		case "D": printf ("Resultados do grupo D\n");
-		        
-				break;
-			
-		//Grupo E
-		case "E": printf ("Resultados do grupo E\n");
-		        break;
-			
-		//Grupo F
-		case "F": printf ("Resultados do grupo F\n");
-		        break;
-		        
-		//Grupo G        
-		case "G": printf ("Resultados do grupo G\n");
-		        break;
-		        
-		//Grupo H        
-		case "H": printf ("Resultados do grupo H\n");
-		        break;		        		        		        
-	}	
+	printf ("Resultados do grupo %c\n\n",grupo);
+	for(i=0;i<4;i++){
+		if(times[i].grupo == grupo){
+			auxGrupo[i] = times[i];						
+		}					
+	}
+	executaGrupo(auxGrupo[],grupo);
 }
 
 int main(){	
