@@ -3,11 +3,11 @@
 #include <time.h>
 
 typedef struct times{
-	char nome[10];
+	char nome[20];
 	char grupo;
 	int vitorias;
 	int empates;
-	int derrota;
+	int derrotas;
 	int pontos;
 	int golsFeitos;
 	int golsSofridos;
@@ -26,12 +26,140 @@ typedef struct times{
 //OBS os arquivos a parti das eliminatorias não vão conter mais o numero de gols nem vitorias nem derrotas , apenas vão ter os nomes das seleçoes classificadas
 
 void populaGrupos(TTime * grupos[]){
+	file *A;
+	char linha[30];
+	int prox;
 	
+	prox = 0;
+	A = fopen("faseinicial.txt","r");
+	
+	if(A==null){
+		printf("Erro ao abrir o arquivo inicial");
+		return;
+	}
+	else{
+		while(!feof(A)){
+			fscanf(A,"%s\n",&linha);
+			int j;
+			int separador;
+			
+			j = 0;
+			separador=0;
+			
+			for(j=0;j < strlen(linha);j++)	{
+				if(linha[j] == ";"){
+					separador++;
+				}
+				else{
+					switch (separador)
+					{
+						//Seleção
+						case 0:
+					        * grupos[prox].nome[j] = linha[j];
+						break;
+					
+						//Grupo
+						case 1:
+							* grupos[prox].nome[j-1] = "\0"; 
+							* grupos[prox].grupo = linha[j];
+						break;
+	
+						//Vitoria
+						case 2: 
+							* grupos[prox].vitorias = (int) linha[j];
+						break;
+						
+						//Empate
+						case 3: 
+							* grupos[prox].empates = (int) linha[j];
+						break;
+						
+						//Derrota
+						case 4: 
+							* grupos[prox].derrotas = (int) linha[j];
+						break;
+	
+						//Pontos
+						case 5: 
+							* grupos[prox].pontos = (int) linha[j];
+						break;
+						
+						//Gols feitos
+						case 6: 
+							* grupos[prox].golsFeitos = (int) linha[j];
+						break;
+						
+						//Gols sofridos
+						case 7: 
+							* grupos[prox].golsSofridos = (int) linha[j];
+						break;					
+					}					
+				}
+			}
+			prox++;
+		}
+		fclose(A);		
+	}	
+}
+
+void criaArquivoGrupo(char nomeDoGrupo,TTime grupoCriar[]){
+	file *A;
+	int i;
+	char linha[30];
+	
+	A = fopen("grupo"+nomeDoGrupo+".txt","a");
+	if((A==null) || (n<=0)){
+		printf("Erro ao criar o arquivo do grupo %c\n",nomeDoGrupo);		
+		return;
+	}
+	else{
+		for(i=0;i<4;i++){
+			//cria a linha
+			int j;
+			j=0;
+			for(j=0;j<strlen(grupoCriar[i].nome);j++){
+				linha[j] = grupoCriar[i].nome[j];
+			}
+			linha[j] = ";"
+			j++;
+			linha[j] = grupoCriar[i].grupo[0];
+			j++;
+			linha[j] = ";"
+			j++;
+			linha[j] = (char) grupoCriar[i].vitorias;
+			j++;
+			linha[j] = ";"
+			j++;
+			linha[j] = (char) grupoCriar[i].empates;
+			j++;
+			linha[j] = ";"
+			j++;
+			linha[j] = (char) grupoCriar[i].derrotas;
+			j++;
+			linha[j] = ";"
+			j++;
+			linha[j] = (char) grupoCriar[i].pontos;
+			j++;
+			linha[j] = ";"
+			j++;
+			linha[j] = (char) grupoCriar[i].golsFeitos;
+			j++;
+			linha[j] = ";"
+			j++;
+			linha[j] = (char) grupoCriar[i].golsSofridos;
+			j++;
+			linha[j] = "\0";
+			//printa a linha
+			fprintf(A,"%s\n",linha);
+		}
+		fclose(A);
+		return 1;
+	}	
 }
 
 void escreveResultadosGrupos(TTime timesListados[]){
 	int i;
-	int saldoGols;
+	int saldoGols;	
 	
 	i=0;
 	saldoGols=0;
@@ -41,7 +169,11 @@ void escreveResultadosGrupos(TTime timesListados[]){
 		saldoGols = timesListados[i].golsFeitos - timesListados[i].golsSofridos;
 		printf("%s        |%d     |%d  |%d  |%d  |%d  |%d  |%d\n",timesListados[i].nome,timesListados[i].pontos,timesListados[i].vitorias,timesListados[i].empates,timesListados[i].derrotas,timesListados[i].golsFeitos,timesListados[i].golsSofridos,saldoGols);
 	}
+	
+	printf("\nAperte enter para continuar\n");
+	scanf("%d",null);
 }
+
 int retornaGol(){
 	int gols;
 	
@@ -65,13 +197,13 @@ void jogarGrupos(TTime * time1,TTime * time2){
 	
 	if(gol1 > gol2){
 		*time1.vitorias++;
-		*time2.derrota++;
+		*time2.derrotas++;
 		
 		*time1.pontos = *time1.pontos + 3;				
 	}else {
 		if(gol1 < gol2){
 			*time2.vitorias++;
-			*time1.derrota++;
+			*time1.derrotas++;
 			
 			*time2.pontos = *time2.pontos + 3;			
 		}else{
@@ -83,7 +215,6 @@ void jogarGrupos(TTime * time1,TTime * time2){
 		}
 	}	
 }
-
 
 void executaGrupo(TTime grupoAtual[],char nomeGrupo) {
 	// lembrete esse grupoAtual[] já é vetor de 4 seleções logo grupo[4]
@@ -125,7 +256,8 @@ void executaGrupo(TTime grupoAtual[],char nomeGrupo) {
 	    }
 	}
 	
-	escreveResultadosGrupos(grupoAtual[]);
+	escreveResultadosGrupos(grupoAtual);
+	criaArquivoGrupo(nomeGrupo,grupoAtual);
 }
 
 void faseDeGrupos(char grupo,TTime times[]){
@@ -146,7 +278,14 @@ void faseDeGrupos(char grupo,TTime times[]){
 int main(){	
 	//Fase de grupos
 	TTime faseGrupos[32];
-	populaGrupos(&faseGrupos[]);
+	populaGrupos(&faseGrupos);
+	faseDeGrupos("A",faseGrupos);
+	faseDeGrupos("B",faseGrupos);
+	faseDeGrupos("C",faseGrupos);
+	faseDeGrupos("D",faseGrupos);
+	faseDeGrupos("F",faseGrupos);
+	faseDeGrupos("G",faseGrupos);
+	faseDeGrupos("H",faseGrupos);
 	//oitavas
 	//quartas
 	//semi
