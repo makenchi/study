@@ -275,6 +275,35 @@ void faseDeGrupos(char grupo,TTime times[]){
 	executaGrupo(auxGrupo[],grupo);
 }
 
+void oitavasDeFinal(char grupos[]){
+	TTime timesOitavas[16];
+	int i;
+	int mudaGrupo;
+	
+	mudaGrupo = 0;
+	
+	for(i=0;i<8;i++){
+		recuperaOitavas(grupos[],timesOitavas[mudaGrupo],timesOitavas[mudaGrupo+1]);
+		mudaGrupo = mudaGrupo+2;
+	}
+	
+	mudagrupo = 0;
+	
+	for(i=0;i<4;i++){
+		disputaOitavas(timesOitavas[mudaGrupo],timesOitavas[mudaGrupo+3]);
+		disputaOitavas(timesOitavas[mudaGrupo+1],timesOitavas[mudaGrupo+2]);
+		mudaGrupo = mudaGrupo+4;
+	}	
+}
+
+void recuperaOitavas(){
+	
+}
+
+void disputaOitavas(){
+	
+}
+
 int main(){	
 	//Fase de grupos
 	TTime faseGrupos[32];
@@ -286,7 +315,10 @@ int main(){
 	faseDeGrupos("F",faseGrupos);
 	faseDeGrupos("G",faseGrupos);
 	faseDeGrupos("H",faseGrupos);
+	system ("cls");	
 	//oitavas
+	char totalGrupos;
+	strcpy(totalGrupos, "ABCDEFGH");
 	//quartas
 	//semi
 	//final
