@@ -383,6 +383,7 @@ void oitavasDeFinal(char grupos[]){
 			escreveOitavas(timesOitavas[mudaGrupo]);
 		}
 		
+		printf("\n %s       X       %s\n",timesOitavas[mudaGrupo+1].nome,timesOitavas[mudaGrupo+2].nome);
 		ganhadorOitavas = (timesOitavas[mudaGrupo+1],timesOitavas[mudaGrupo+2]);
 
 		if(ganhadorOitavas == 1){
