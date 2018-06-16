@@ -528,8 +528,9 @@ int main(){
 	faseDeGrupos("H",faseGrupos);
 	system ("cls");	
 	//oitavas
-	char totalGrupos;
+	char totalGrupos[8];
 	strcpy(totalGrupos, "ABCDEFGH");
+	oitavasDeFinal(totalGrupos);
 	//quartas
 	//semi
 	//final
