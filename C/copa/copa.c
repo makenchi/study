@@ -359,6 +359,8 @@ void oitavasDeFinal(char grupos[]){
 	mudaGrupo = 0;
 	ganhadorOitavas = 0;
 	
+	printf("\n Inicio das Oitavas de final\n");
+	
 	for(i=0;i<8;i++){
 		recuperaOitavas(grupos[i],timesOitavas[mudaGrupo],timesOitavas[mudaGrupo+1]);
 		mudaGrupo = mudaGrupo+2;
@@ -367,13 +369,16 @@ void oitavasDeFinal(char grupos[]){
 	mudagrupo = 0;
 	
 	for(i=0;i<4;i++){
+		printf("\n %s       X       %s\n",timesOitavas[mudaGrupo].nome,timesOitavas[mudaGrupo+3].nome);
 		ganhadorOitavas = disputaOitavas(timesOitavas[mudaGrupo],timesOitavas[mudaGrupo+3]);
 		
 		if(ganhadorOitavas == 1){
+			printf("VENCEDOR: %s\n",timesOitavas[mudaGrupo]);
 			escreveOitavas(timesOitavas[mudaGrupo]);
-			escreveOitavas(timesOitavas[mudaGrupo+3]);	
+			escreveOitavas(timesOitavas[mudaGrupo+3]);
 		}
 		else{
+			printf("VENCEDOR: %s\n",timesOitavas[mudaGrupo+3]);
 			escreveOitavas(timesOitavas[mudaGrupo+3]);
 			escreveOitavas(timesOitavas[mudaGrupo]);
 		}
@@ -381,10 +386,12 @@ void oitavasDeFinal(char grupos[]){
 		ganhadorOitavas = (timesOitavas[mudaGrupo+1],timesOitavas[mudaGrupo+2]);
 
 		if(ganhadorOitavas == 1){
+			printf("VENCEDOR: %s\n",timesOitavas[mudaGrupo+1]);
 			escreveOitavas(timesOitavas[mudaGrupo+1]);
 			escreveOitavas(timesOitavas[mudaGrupo+2]);	
 		}
 		else{
+			printf("VENCEDOR: %s\n",timesOitavas[mudaGrupo+2]);
 			escreveOitavas(timesOitavas[mudaGrupo+2]);
 			escreveOitavas(timesOitavas[mudaGrupo+1]);
 		}
