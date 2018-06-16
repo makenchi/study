@@ -18,7 +18,7 @@ typedef struct {
 } TTime;
 
 void populaGrupos(TTime * grupos[]){
-	file *A;
+	FILE *A;
 	char linha[30];
 	int prox;
 	
@@ -95,7 +95,7 @@ void populaGrupos(TTime * grupos[]){
 }
 
 void criaArquivoGrupo(char nomeDoGrupo,TTime grupoCriar[]){
-	file *A;
+	FILE *A;
 	int i;
 	char linha[30];
 	
@@ -297,7 +297,7 @@ void faseDeGrupos(char grupo,TTime times[]){
 }
 
 void escreveOitavas(TTime timeSel){
-	file *A;
+	FILE *A;
 	int i;
 	char linha[30];
 	
@@ -402,7 +402,7 @@ void oitavasDeFinal(char grupos[]){
 }
 
 void recuperaOitavas(char grupo, TTime * primeiroTime, TTime * segundoTime){
-	file *A;
+	FILE *A;
 	int i;
 	char linha[30];
 	int prox;
@@ -523,6 +523,402 @@ int disputaOitavas(TTime * time1,TTime * time2){
 	return ganhador;
 }
 
+void quartasDeFinal(){
+	TTime times[8];
+	int i;
+	int vencedor;
+	int prox;
+	
+	prox = 0;
+	recuperaQuartas(times);
+	
+	printf("\n Inicio das Quartas de final\n");
+	
+	for(i=0;i<4;i++){
+		printf("\n %s       X       %s\n",times[prox].nome,times[prox+1].nome);
+		vencedor = disputaQuartas(times[prox],times[prox+1]);
+		if(vencedor == 1){
+			printf("VENCEDOR: %s\n",times[prox].nome);
+			escreveQuartas(times[prox]);
+			escreveQuartas(times[prox+1]);
+		}
+		else{
+			printf("VENCEDOR: %s\n",times[prox+1].nome);
+			escreveQuartas(times[prox+1]);
+			escreveQuartas(times[prox]);
+		}
+		prox=prox+2;
+	}
+}
+
+int disputaQuartas(TTime * time1,TTime * time2){
+	int gol1,gol2;
+	int ganhador;
+		
+	gol1 = retornaGol();
+	gol2 = retornaGol();
+	
+	*time1.golsFeitos = *time1.golsFeitos + gol1;
+	*time2.golsFeitos = *time2.golsFeitos + gol2;
+	
+	*time1.golsSofridos = *time1.golsSofridos + gol2;
+	*time2.golsSofridos = *time2.golsSofridos + gol1;
+	
+	if(gol1 > gol2){
+		*time1.vitorias++;
+		*time2.derrotas++;
+		ganhador = 1;
+	}else {
+		if(gol1 < gol2){
+			*time2.vitorias++;
+			*time1.derrotas++;
+			ganhador = 2;
+		}else{
+			if(disputaPenaltis() == 1){
+				*time1.vitorias++;
+				*time2.derrotas++;
+				ganhador = 1;				
+			}
+			else{
+				*time2.vitorias++;
+				*time1.derrotas++;
+				ganhador = 2;
+			}
+		}
+	}
+	
+	return ganhador;
+}
+
+void recuperaQuartas(TTime * timesQuartas[]){
+FILE *A;
+	char linha[30];
+	int prox;
+	
+	prox = 0;
+	A = fopen("oitavas.txt","r");
+	
+	if(A==null){
+		printf("Erro ao abrir o arquivo das oitavas");
+		return;
+	}
+	else{
+		while(!feof(A)){
+			fscanf(A,"%s\n\n",&linha);
+			int j;
+			int separador;
+			
+			j = 0;
+			separador=0;
+			
+			for(j=0;j < strlen(linha);j++)	{
+				if(linha[j] == ";"){
+					separador++;
+				}
+				else{
+					switch (separador)
+					{
+						//Seleção
+						case 0:
+					        * timesQuartas[prox].nome[j] = linha[j];
+						break;
+					
+						//Grupo
+						case 1:
+							* timesQuartas[prox].nome[j-1] = "\0"; 
+							* timesQuartas[prox].grupo = linha[j];
+						break;
+	
+						//Vitoria
+						case 2: 
+							* timesQuartas[prox].vitorias = (int) linha[j];
+						break;
+						
+						//Empate
+						case 3: 
+							* timesQuartas[prox].empates = (int) linha[j];
+						break;
+						
+						//Derrota
+						case 4: 
+							* timesQuartas[prox].derrotas = (int) linha[j];
+						break;
+	
+						//Pontos
+						case 5: 
+							* timesQuartas[prox].pontos = (int) linha[j];
+						break;
+						
+						//Gols feitos
+						case 6: 
+							* timesQuartas[prox].golsFeitos = (int) linha[j];
+						break;
+						
+						//Gols sofridos
+						case 7: 
+							* timesQuartas[prox].golsSofridos = (int) linha[j];
+						break;					
+					}					
+				}
+			}
+			prox++;
+		}
+		fclose(A);		
+	}	
+}
+
+void escreveQuartas(TTime timeSel){
+	FILE *A;
+	int i;
+	char linha[30];
+	
+	A = fopen("quartas.txt","a");
+	if((A==null)){
+		printf("Erro ao criar o arquivo das quartas de final\n");		
+		return;
+	}
+	else{		
+		//cria a linha
+
+		for(i=0;i<strlen(timeSel.nome);i++){
+			linha[i] = timeSel.nome[i];
+		}
+		linha[i] = ";"
+		i++;
+		linha[i] = timeSel.grupo;
+		i++;
+		linha[i] = ";"
+		i++;
+		linha[i] = (char) timeSel.vitorias;
+		i++;
+		linha[i] = ";"
+		i++;
+		linha[i] = (char) timeSel.empates;
+		i++;
+		linha[i] = ";"
+		i++;
+		linha[i] = (char) timeSel.derrotas;
+		i++;
+		linha[i] = ";"
+		i++;
+		linha[i] = (char) timeSel.pontos;
+		i++;
+		linha[i] = ";"
+		i++;
+		linha[i] = (char) timeSel.golsFeitos;
+		i++;
+		linha[i] = ";"
+		i++;
+		linha[i] = (char) timeSel.golsSofridos;
+		i++;
+		linha[i] = "\0";
+		
+		//printa a linha
+		fprintf(A,"%s\n",linha);
+		
+		fclose(A);
+		return;
+	}		
+}
+
+void semiFinal(){
+	TTime times[4];
+	int i;
+	int vencedor;
+	int prox;
+	
+	prox = 0;
+	recuperaSemi(times);
+	
+	printf("\n Inicio das Semi finais\n");
+	
+	for(i=0;i<2;i++){
+		printf("\n %s       X       %s\n",times[prox].nome,times[prox+1].nome);
+		vencedor = disputaSemi(times[prox],times[prox+1]);
+		if(vencedor == 1){
+			printf("VENCEDOR: %s\n",times[prox].nome);
+			escreveSemi(times[prox]);
+			escreveSemi(times[prox+1]);
+		}
+		else{
+			printf("VENCEDOR: %s\n",times[prox+1].nome);
+			escreveSemi(times[prox+1]);
+			escreveSemi(times[prox]);
+		}
+		prox=prox+2;
+	}	
+}
+
+int disputaSemi(TTime * time1,TTime * time2){
+	int gol1,gol2;
+	int ganhador;
+		
+	gol1 = retornaGol();
+	gol2 = retornaGol();
+	
+	*time1.golsFeitos = *time1.golsFeitos + gol1;
+	*time2.golsFeitos = *time2.golsFeitos + gol2;
+	
+	*time1.golsSofridos = *time1.golsSofridos + gol2;
+	*time2.golsSofridos = *time2.golsSofridos + gol1;
+	
+	if(gol1 > gol2){
+		*time1.vitorias++;
+		*time2.derrotas++;
+		ganhador = 1;
+	}else {
+		if(gol1 < gol2){
+			*time2.vitorias++;
+			*time1.derrotas++;
+			ganhador = 2;
+		}else{
+			if(disputaPenaltis() == 1){
+				*time1.vitorias++;
+				*time2.derrotas++;
+				ganhador = 1;				
+			}
+			else{
+				*time2.vitorias++;
+				*time1.derrotas++;
+				ganhador = 2;
+			}
+		}
+	}
+	
+	return ganhador;
+}
+
+void recuperaSemi(TTime * timesSemi[]){
+FILE *A;
+	char linha[30];
+	int prox;
+	
+	prox = 0;
+	A = fopen("quartas.txt","r");
+	
+	if(A==null){
+		printf("Erro ao abrir o arquivo das quartas");
+		return;
+	}
+	else{
+		while(!feof(A)){
+			fscanf(A,"%s\n\n",&linha);
+			int j;
+			int separador;
+			
+			j = 0;
+			separador=0;
+			
+			for(j=0;j < strlen(linha);j++)	{
+				if(linha[j] == ";"){
+					separador++;
+				}
+				else{
+					switch (separador)
+					{
+						//Seleção
+						case 0:
+					        * timesSemi[prox].nome[j] = linha[j];
+						break;
+					
+						//Grupo
+						case 1:
+							* timesSemi[prox].nome[j-1] = "\0"; 
+							* timesSemi[prox].grupo = linha[j];
+						break;
+	
+						//Vitoria
+						case 2: 
+							* timesSemi[prox].vitorias = (int) linha[j];
+						break;
+						
+						//Empate
+						case 3: 
+							* timesSemi[prox].empates = (int) linha[j];
+						break;
+						
+						//Derrota
+						case 4: 
+							* timesSemi[prox].derrotas = (int) linha[j];
+						break;
+	
+						//Pontos
+						case 5: 
+							* timesSemi[prox].pontos = (int) linha[j];
+						break;
+						
+						//Gols feitos
+						case 6: 
+							* timesSemi[prox].golsFeitos = (int) linha[j];
+						break;
+						
+						//Gols sofridos
+						case 7: 
+							* timesSemi[prox].golsSofridos = (int) linha[j];
+						break;					
+					}					
+				}
+			}
+			prox++;
+		}
+		fclose(A);		
+	}	
+}
+
+void escreveSemi(TTime timeSel){
+	FILE *A;
+	int i;
+	char linha[30];
+	
+	A = fopen("semi.txt","a");
+	if((A==null)){
+		printf("Erro ao criar o arquivo das semi finais\n");		
+		return;
+	}
+	else{		
+		//cria a linha
+
+		for(i=0;i<strlen(timeSel.nome);i++){
+			linha[i] = timeSel.nome[i];
+		}
+		linha[i] = ";"
+		i++;
+		linha[i] = timeSel.grupo;
+		i++;
+		linha[i] = ";"
+		i++;
+		linha[i] = (char) timeSel.vitorias;
+		i++;
+		linha[i] = ";"
+		i++;
+		linha[i] = (char) timeSel.empates;
+		i++;
+		linha[i] = ";"
+		i++;
+		linha[i] = (char) timeSel.derrotas;
+		i++;
+		linha[i] = ";"
+		i++;
+		linha[i] = (char) timeSel.pontos;
+		i++;
+		linha[i] = ";"
+		i++;
+		linha[i] = (char) timeSel.golsFeitos;
+		i++;
+		linha[i] = ";"
+		i++;
+		linha[i] = (char) timeSel.golsSofridos;
+		i++;
+		linha[i] = "\0";
+		
+		//printa a linha
+		fprintf(A,"%s\n",linha);
+		
+		fclose(A);
+		return;
+	}		
+}
+
 int main(){	
 	//Fase de grupos
 	TTime faseGrupos[32];
@@ -540,6 +936,10 @@ int main(){
 	strcpy(totalGrupos, "ABCDEFGH");
 	oitavasDeFinal(totalGrupos);
 	//quartas
+	quartasDeFinal();
 	//semi
+	semiFinal();
 	//final
+	
+	return 1;
 }
