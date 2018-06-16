@@ -2,7 +2,11 @@
 #include <stdlib.h>
 #include <time.h>
 
-typedef struct times{
+//Trabalho feito por
+//Lucas Silva dos Santos
+//Gabriel Ferreira
+
+typedef struct {
 	char nome[20];
 	char grupo;
 	int vitorias;
@@ -12,18 +16,6 @@ typedef struct times{
 	int golsFeitos;
 	int golsSofridos;
 } TTime;
-
-//funcao void jogarGrupos(TTime * time1,TTime * time2) - aqui ele vai pegar os dois times , vai usara a funcao retornaGol() para calcular gol, e vai guarda la nas informações do ponteiro , quem ganho ou empato, o numero de gols feitos e recebidos
-
-//funçao void grupo(TTime grupo1[]) - aqui vai ser a faze 1 com todos os 32 times, porem claro pegando os grupo de 4 em 4 por vez, vai fazer cada Time jogar com os outros 3 participantes desse grupo e vai ordena o vetor de acordo com as regras de vitoria derrota e empate + a regras de desempate, ela fazer o vetor ficar ordenado na ordem de vencedores  (exemplo de parametro TTime vetor[4]; tamanho 4 )
-
-//funçao TTime * juntarVencedor(TTime grupo1[],TTime grupo2[]) aqui vc vai pegar o priemrio e segundo ganahdor do grupo A e juntar com o primeiro e segundo do grupo B ""ele salva os 4 vencedores no arquivo "" , ele retorna um vetor do tipo TTime que tem os vencedores pra usar no jogoEliminatoria()
-
-//funcao void Eliminatoria(TTime grupo1[])  -  aqui vc vai fazer o vetor que tem 4 seleções e nele vai "jogar"(jogarEliminatoria()) a seleção da casa 0 do vetor com a casa 3  , e a casa 1 com a casa 2 do vetor(para jogar cruzado) e aqui ele calcula com as vitorias e derrotas quem ficou em 1º , 2º, e ordena o ventor dos vencedores
-
-//função int jogarEliminatoria(TTime time1,TTime time2) - aqui vai pegar os nomes do time e vai usar retornaGol(), se der empate vai simular um penalti com algum rando de 0 e 1, o primeiro time que receber o 0 perde, logo ele retor um numero que vai ser 1 se o primeiro time ganhou ouuu 2 se o segundo time ganhou (obs a parti daqui os dados de gols vitoris derrotas e etc nem são mais salvos só vale o nome)
-
-//OBS os arquivos a parti das eliminatorias não vão conter mais o numero de gols nem vitorias nem derrotas , apenas vão ter os nomes das seleçoes classificadas
 
 void populaGrupos(TTime * grupos[]){
 	file *A;
@@ -108,7 +100,7 @@ void criaArquivoGrupo(char nomeDoGrupo,TTime grupoCriar[]){
 	char linha[30];
 	
 	A = fopen("grupo"+nomeDoGrupo+".txt","a");
-	if((A==null) || (n<=0)){
+	if((A==null)){
 		printf("Erro ao criar o arquivo do grupo %c\n",nomeDoGrupo);		
 		return;
 	}
@@ -122,7 +114,7 @@ void criaArquivoGrupo(char nomeDoGrupo,TTime grupoCriar[]){
 			}
 			linha[j] = ";"
 			j++;
-			linha[j] = grupoCriar[i].grupo[0];
+			linha[j] = grupoCriar[i].grupo;
 			j++;
 			linha[j] = ";"
 			j++;
@@ -153,7 +145,7 @@ void criaArquivoGrupo(char nomeDoGrupo,TTime grupoCriar[]){
 			fprintf(A,"%s\n",linha);
 		}
 		fclose(A);
-		return 1;
+		return;
 	}	
 }
 
@@ -181,6 +173,35 @@ int retornaGol(){
 	gols = rand() % 10 + 1;
 	
 	return gols;
+}
+
+int disputaPenaltis(){
+	int gols1;
+	int gols2;
+	int vencedor;
+	int cobrancas;
+	
+	gols1 = 0;
+	gols2 = 0;
+	vencedor = 0;
+	
+	srand (time(NULL));
+	
+	while(vencedor == 0){
+		gols1 += rand() % 2;
+		gols2 += rand() % 2;
+		cobrancas++;
+		if(cobrancas>=5){
+			if(gols1>gols2){
+				vencedor = 1;
+			}
+			else if(gols2>gols1){
+				vencedor = 2;
+			}
+		}
+	}	
+	
+	return vencedor;
 }
 
 void jogarGrupos(TTime * time1,TTime * time2){
@@ -275,33 +296,223 @@ void faseDeGrupos(char grupo,TTime times[]){
 	executaGrupo(auxGrupo[],grupo);
 }
 
+void escreveOitavas(TTime timeSel){
+	file *A;
+	int i;
+	char linha[30];
+	
+	A = fopen("oitavas.txt","a");
+	if((A==null)){
+		printf("Erro ao criar o arquivo das oitavas de final\n");		
+		return;
+	}
+	else{		
+		//cria a linha
+
+		for(i=0;i<strlen(timeSel.nome);i++){
+			linha[i] = timeSel.nome[i];
+		}
+		linha[i] = ";"
+		i++;
+		linha[i] = timeSel.grupo;
+		i++;
+		linha[i] = ";"
+		i++;
+		linha[i] = (char) timeSel.vitorias;
+		i++;
+		linha[i] = ";"
+		i++;
+		linha[i] = (char) timeSel.empates;
+		i++;
+		linha[i] = ";"
+		i++;
+		linha[i] = (char) timeSel.derrotas;
+		i++;
+		linha[i] = ";"
+		i++;
+		linha[i] = (char) timeSel.pontos;
+		i++;
+		linha[i] = ";"
+		i++;
+		linha[i] = (char) timeSel.golsFeitos;
+		i++;
+		linha[i] = ";"
+		i++;
+		linha[i] = (char) timeSel.golsSofridos;
+		i++;
+		linha[i] = "\0";
+		
+		//printa a linha
+		fprintf(A,"%s\n",linha);
+		
+		fclose(A);
+		return;
+	}		
+}
+
 void oitavasDeFinal(char grupos[]){
 	TTime timesOitavas[16];
 	int i;
 	int mudaGrupo;
+	int ganhadorOitavas;			
 	
 	mudaGrupo = 0;
+	ganhadorOitavas = 0;
 	
 	for(i=0;i<8;i++){
-		recuperaOitavas(grupos[],timesOitavas[mudaGrupo],timesOitavas[mudaGrupo+1]);
+		recuperaOitavas(grupos[i],timesOitavas[mudaGrupo],timesOitavas[mudaGrupo+1]);
 		mudaGrupo = mudaGrupo+2;
 	}
 	
 	mudagrupo = 0;
 	
 	for(i=0;i<4;i++){
-		disputaOitavas(timesOitavas[mudaGrupo],timesOitavas[mudaGrupo+3]);
-		disputaOitavas(timesOitavas[mudaGrupo+1],timesOitavas[mudaGrupo+2]);
+		ganhadorOitavas = disputaOitavas(timesOitavas[mudaGrupo],timesOitavas[mudaGrupo+3]);
+		
+		if(ganhadorOitavas == 1){
+			escreveOitavas(timesOitavas[mudaGrupo]);
+			escreveOitavas(timesOitavas[mudaGrupo+3]);	
+		}
+		else{
+			escreveOitavas(timesOitavas[mudaGrupo+3]);
+			escreveOitavas(timesOitavas[mudaGrupo]);
+		}
+		
+		ganhadorOitavas = (timesOitavas[mudaGrupo+1],timesOitavas[mudaGrupo+2]);
+
+		if(ganhadorOitavas == 1){
+			escreveOitavas(timesOitavas[mudaGrupo+1]);
+			escreveOitavas(timesOitavas[mudaGrupo+2]);	
+		}
+		else{
+			escreveOitavas(timesOitavas[mudaGrupo+2]);
+			escreveOitavas(timesOitavas[mudaGrupo+1]);
+		}
+		
 		mudaGrupo = mudaGrupo+4;
+	}		
+}
+
+void recuperaOitavas(char grupo, TTime * primeiroTime, TTime * segundoTime){
+	file *A;
+	int i;
+	char linha[30];
+	int prox;
+	
+	A = fopen("grupo"+grupo+".txt","r");
+	
+	if(A==null){
+		printf("Erro ao abrir o arquivo do grupo %c\n",grupo);
+		return 0;
+	}
+	else{
+		for(i=0;i<2;i++){
+			fscanf(A,"%s\n",&linha);
+			int j;
+			int separador;
+			TTime aux;
+			
+			j = 0;
+			separador=0;
+			
+			for(j=0;j < strlen(linha);j++)	{
+				if(linha[j] == ";"){
+					separador++;
+				}
+				else{
+					switch (separador)
+					{
+						//Seleção
+						case 0:
+					        aux.nome[j] = linha[j];
+						break;
+					
+						//Grupo
+						case 1:
+							aux.nome[j-1] = "\0"; 
+							aux.grupo = linha[j];
+						break;
+	
+						//Vitoria
+						case 2: 
+							aux.vitorias = (int) linha[j];
+						break;
+						
+						//Empate
+						case 3: 
+							aux.empates = (int) linha[j];
+						break;
+						
+						//Derrota
+						case 4: 
+							aux.derrotas = (int) linha[j];
+						break;
+	
+						//Pontos
+						case 5: 
+							aux.pontos = (int) linha[j];
+						break;
+						
+						//Gols feitos
+						case 6: 
+							aux.golsFeitos = (int) linha[j];
+						break;
+						
+						//Gols sofridos
+						case 7: 
+							aux.golsSofridos = (int) linha[j];
+						break;					
+					}					
+				}
+			}			
+			if(i==0){
+				* primeiroTime = aux;
+			}
+			else{
+				* segundoTime = aux;
+			}
+		}
+		return;
 	}	
 }
 
-void recuperaOitavas(){
+int disputaOitavas(TTime * time1,TTime * time2){
+	int gol1,gol2;
+	int ganhador;
+		
+	gol1 = retornaGol();
+	gol2 = retornaGol();
 	
-}
-
-void disputaOitavas(){
+	*time1.golsFeitos = *time1.golsFeitos + gol1;
+	*time2.golsFeitos = *time2.golsFeitos + gol2;
 	
+	*time1.golsSofridos = *time1.golsSofridos + gol2;
+	*time2.golsSofridos = *time2.golsSofridos + gol1;
+	
+	if(gol1 > gol2){
+		*time1.vitorias++;
+		*time2.derrotas++;
+		ganhador = 1;
+	}else {
+		if(gol1 < gol2){
+			*time2.vitorias++;
+			*time1.derrotas++;
+			ganhador = 2;
+		}else{
+			if(disputaPenaltis() == 1){
+				*time1.vitorias++;
+				*time2.derrotas++;
+				ganhador = 1;				
+			}
+			else{
+				*time2.vitorias++;
+				*time1.derrotas++;
+				ganhador = 2;
+			}
+		}
+	}
+	
+	return ganhador;
 }
 
 int main(){	
