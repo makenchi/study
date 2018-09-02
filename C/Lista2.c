@@ -59,7 +59,6 @@ int main ()
 			case 2: printf ("Entre com o número a ser removido: ");
 			        scanf ("%d", &num1);
 			        
-			        //if (remover (&L, num1) != 0)
 			        if (remover (&L, num1))
 			        {
 			        	printf ("Elemento removido!\n");
@@ -145,45 +144,6 @@ int inserir (TLista *L, int numero)
 
 int remover (TLista *L, int numero)
 {
-	TLista aux, aux2;
-	
-	int rem=0;   //número de remoções feitas na função	
-	
-	//remover as ocorrencias do numero no inicio da lista	
-	//while ((*L != NULL) && (*L)->valor==numero)   
-	while ((*L) && (*L)->valor==numero)
-	{
-		aux = *L;
-		*L=aux->prox;
-		free(aux);
-		rem++;
-	}
-	
-	//se a lista não estiver vazia
-	if (*L)
-	{	
-		aux=*L;   		//aux apontando para o primeiro nó da lista
-		aux2=aux->prox;	//aux2 apontando para o segundo nó
-		
-		while(aux2!=NULL)
-		{
-			if(aux2->valor==numero)
-			{
-				aux->prox=aux2->prox;
-				rem++;
-				free(aux2);
-				aux2 = aux->prox;				
-			}
-			else
-			{
-				//aux=aux->prox;
-				aux = aux2;
-				aux2=aux2->prox;
-			}
-        }
-    }
-    
-	return rem;	
 }
 
 int alterar (TLista L, int velho, int novo)
