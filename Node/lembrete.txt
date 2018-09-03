@@ -1,0 +1,4 @@
+ES6
+let - utilizado para criar uma variável que ganha o escopo de onde ela foi criada
+arrow functions - ex:
+                    var dobro = numero => numero * 2;
