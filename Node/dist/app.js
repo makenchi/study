@@ -16,9 +16,15 @@ var Carro = /** @class */ (function () {
     };
     return Carro;
 }());
-var carroA = new Carro('Uno', 2);
-console.log(carroA);
-carroA.acelerar();
-console.log(carroA);
-carroA.parar();
-console.log(carroA);
+var Consesionaria = /** @class */ (function () {
+    function Consesionaria(endereco) {
+        this.endereco = endereco;
+    }
+    Consesionaria.prototype.fornecerEndereco = function () {
+        return this.endereco;
+    };
+    Consesionaria.prototype.mostrarListaDeCarros = function () {
+        return this.listaDeCarros;
+    };
+    return Consesionaria;
+}());

@@ -4,3 +4,4 @@ arrow functions - ex:
                     var dobro = numero => numero * 2;
 
 TypeScript - compila os arquivos .ts com scripts em ES6 para arquivos js
+tsc -w = trava o prompt e automaticamente compila os arquivos ts em js
