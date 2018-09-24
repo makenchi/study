@@ -1,72 +1,9 @@
-class Carro {
-    private modelo: string
-    private numDePortas: number
-    private velocidade: number = 0
+/*Importando os módulos*/
+import{Carro} from './Carro'
+import{Concesionaria} from './Concessionaria'
+import{Pessoa} from './Pessoa'
 
-    constructor(modelo: string, numDePortas: number){
-        this.modelo = modelo
-        this.numDePortas = numDePortas
-    }
-
-    public acelerar(): void{
-        this.velocidade = this.velocidade + 10
-    }
-
-    public parar(): void{
-        this.velocidade = 0
-    }
-
-    public mostraVelocidade(): number{
-        return this.velocidade
-    }
-}
-
-class Concesionaria{
-    private endereco: string
-    private listaDeCarros: Array<Carro>
-
-    constructor(endereco: string, listaCarros: Array<Carro>){
-        this.endereco = endereco
-        this.listaDeCarros = listaCarros
-    }
-
-    public fornecerEndereco(): string{
-        return this.endereco
-    }
-
-    public mostrarListaDeCarros(): Array<Carro>{
-        return this.listaDeCarros
-    }
-}
-
-class Pessoa{
-    private nome: string
-    private carroPreferido: string
-    private carro: any
-
-    constructor(nomePessoa: string, carroP: string){
-        this.nome = nomePessoa
-        this.carroPreferido = carroP
-    }
-
-    public dizerNome(): string{
-        return this.nome
-    }
-
-    public dizerCarroPreferido(): string{
-        return this.carroPreferido
-    }
-
-    public comprarCarro(carroComprado: Carro): void{
-        this.carro = carroComprado
-    }
-
-    public dizerCarroQueTem(): Carro{
-        return this.carro
-    }
-}
-
-/*criando os carro */
+/*criando os carro*/
 let carroA = new Carro('Batmovel',2)
 let carroB = new Carro('Bugre aranha',4)
 let carroC = new Carro('Uno',2)
