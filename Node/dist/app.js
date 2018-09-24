@@ -16,17 +16,18 @@ var Carro = /** @class */ (function () {
     };
     return Carro;
 }());
-var Consesionaria = /** @class */ (function () {
-    function Consesionaria(endereco) {
+var Concesionaria = /** @class */ (function () {
+    function Concesionaria(endereco, listaCarros) {
         this.endereco = endereco;
+        this.listaDeCarros = listaCarros;
     }
-    Consesionaria.prototype.fornecerEndereco = function () {
+    Concesionaria.prototype.fornecerEndereco = function () {
         return this.endereco;
     };
-    Consesionaria.prototype.mostrarListaDeCarros = function () {
+    Concesionaria.prototype.mostrarListaDeCarros = function () {
         return this.listaDeCarros;
     };
-    return Consesionaria;
+    return Concesionaria;
 }());
 var Pessoa = /** @class */ (function () {
     function Pessoa(nomePessoa, carroP) {
@@ -37,7 +38,7 @@ var Pessoa = /** @class */ (function () {
         return this.nome;
     };
     Pessoa.prototype.dizerCarroPreferido = function () {
-        return this.carro;
+        return this.carroPreferido;
     };
     Pessoa.prototype.comprarCarro = function (carroComprado) {
         this.carro = carroComprado;
@@ -47,3 +48,21 @@ var Pessoa = /** @class */ (function () {
     };
     return Pessoa;
 }());
+/*criando os carro */
+var carroA = new Carro('Batmovel', 2);
+var carroB = new Carro('Bugre aranha', 4);
+var carroC = new Carro('Uno', 2);
+/*monta lista de carros*/
+var listaDeCarros = [carroA, carroB, carroC];
+/*Também pode ser escrito assim
+let listaDeCarros: Array<Carro> = [carroA, carroB, carroC]*/
+var concessionaria = new Concesionaria('Metrópolis', listaDeCarros);
+console.log(concessionaria.mostrarListaDeCarros());
+/*Comprar o carro */
+var cliente = new Pessoa('Bruce Wayne', 'Batmovel');
+concessionaria.mostrarListaDeCarros().map(function (carro) {
+    if (carro['modelo'] == cliente.dizerCarroPreferido()) {
+        cliente.comprarCarro(carro);
+    }
+});
+console.log(cliente.dizerCarroQueTem());
