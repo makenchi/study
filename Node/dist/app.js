@@ -22,3 +22,4 @@ concessionaria.mostrarListaDeCarros().map(function (carro) {
     }
 });
 console.log(cliente.dizerCarroQueTem());
+console.log(concessionaria.fornecerHoraDeFunc());

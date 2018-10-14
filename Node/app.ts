@@ -26,3 +26,4 @@ concessionaria.mostrarListaDeCarros().map((carro: Carro) => {
 })
 
 console.log(cliente.dizerCarroQueTem())
+console.log(concessionaria.fornecerHoraDeFunc())
